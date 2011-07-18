@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{DE7F476E-7EF7-453C-BD2F-2C3ED9496F9D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Brass9</RootNamespace>
+    <AssemblyName>Brass9WebScript</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\Linq\IEnumerableExtensions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Web\Mvc\MvcHtmlHelper.cs" />
+    <Compile Include="Web\Script\AppScripts.cs" />
+    <Compile Include="Web\Script\FileScriptResource.cs" />
+    <Compile Include="Web\Script\InlineScriptResource.cs" />
+    <Compile Include="Web\Script\PageScriptMapper.cs" />
+    <Compile Include="Web\Script\ScriptLoadGroup.cs" />
+    <Compile Include="Web\Script\ScriptLoadItem.cs" />
+    <Compile Include="Web\Script\ScriptNotRegisteredException.cs" />
+    <Compile Include="Web\Script\ScriptResource.cs" />
+    <Compile Include="Web\Script\Scripts.cs" />
+    <Compile Include="Web\Script\TreeMapper\PageScriptTreeMapper.cs" />
+    <Compile Include="Web\Script\TreeMapper\ScriptsBag.cs" />
+    <Compile Include="Web\Script\TreeMapper\ScriptTree.cs" />
+    <Compile Include="Web\Script\TreeMapper\ScriptTreeLayer.cs" />
+    <Compile Include="Web\Script\TreeMapper\TreeSharedDependency.cs" />
+    <Compile Include="Web\Script\TreeMapper\TreeSharedDependencyMap.cs" />
+    <Compile Include="Web\Style\AppCss.cs" />
+    <Compile Include="Web\Style\CssResource.cs" />
+    <Compile Include="Web\Style\FileCssResource.cs" />
+    <Compile Include="Web\Style\PageCss.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
