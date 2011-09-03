@@ -1,9 +1,4 @@
-﻿/*! Brass9.Web.Script
-    (c) Brass Nine Design
-    MIT License
-*/
-
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
@@ -142,9 +137,14 @@ namespace Brass9.Web.Script
 		/// <param name="name">Name of script to include</param>
 		public ScriptResource Include(string name)
 		{
-			var script = AppScripts.Current.List[name];
-			PageScripts.Add(script);
-			return script;
+			ScriptResource script;
+			if (AppScripts.Current.List.TryGetValue(name, out script))
+			{
+				PageScripts.Add(script);
+				return script;
+			}
+
+			throw new ArgumentOutOfRangeException("name", name, "Did you remember to define this Script in Global.asax.cs?");
 		}
 
 		/// <summary>
