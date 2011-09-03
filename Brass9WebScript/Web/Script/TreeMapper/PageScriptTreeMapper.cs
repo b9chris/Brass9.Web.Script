@@ -127,10 +127,11 @@ namespace Brass9.Web.Script.TreeMapper
 
 			// Tree1 and 2 now need to match in structure relative to these scripts in order to be easily merged.
 			// We need to Extend each tree wherever one is shorter in distance between shared scripts than the other
-			var tree1Order = getScriptsOrderForTree(scriptsToMerge, tree1);
+			var tree1Order = getScriptsFlatOrderForTree(scriptsToMerge, tree1);
 
+			/*
 #if DEBUG
-			var tree2Order = getScriptsOrderForTree(scriptsToMerge, tree2);
+			var tree2Order = getScriptsFlatOrderForTree(scriptsToMerge, tree2);
 			// TODO: This isn't quite true. Since the compare is arbitrary for scripts on the same level, we could end up throwing here
 			// for:
 			// a -> jqueryui, site -> jquery
@@ -138,9 +139,10 @@ namespace Brass9.Web.Script.TreeMapper
 			// a -> jqueryui, something -> site -> jquery
 			// This requires further PushDown calls on the trees to separate the 2 dependencies from their shared layer in tree1
 			// Write this when needed
-			if (!tree1Order.SequenceEqual(tree2Order))
+			if (!scriptOrdersMatch(scriptsToMerge, tree1, tree2))
 				throw new Exception("ScriptTree dependencies are not in the same order as each other; we don't know how to merge these");
 #endif
+			*/
 
 			for (int iTree1 = tree1Order.Length - 2; iTree1 >= 0; iTree1--)
 			{
@@ -209,9 +211,64 @@ namespace Brass9.Web.Script.TreeMapper
 			return true;
 		}
 
-		protected string[] getScriptsOrderForTree(IEnumerable<string> scripts, ScriptTree tree)
+		protected string[] getScriptsFlatOrderForTree(IEnumerable<string> scripts, ScriptTree tree)
 		{
 			return scripts.OrderBy(s => tree.ScriptLayerMap[s]).ToArray();
+		}
+
+		protected List<HashSet<string>> getScriptsOrderForTree(IEnumerable<string> scripts, ScriptTree tree)
+		{
+			string[] scriptsInOrder = getScriptsFlatOrderForTree(scripts, tree);
+
+			var list = new List<HashSet<string>>();
+			HashSet<string> current = null;
+
+			string lastScript = null;
+			foreach (string script in scriptsInOrder)
+			{
+				if (lastScript != null && tree.ScriptLayerMap[lastScript] == tree.ScriptLayerMap[script])
+				{
+					current.Add(script);
+				}
+				else
+				{
+					current = new HashSet<string>();
+					list.Add(current);
+					current.Add(script);
+				}
+				lastScript = script;
+			}
+
+			return list;
+		}
+
+		protected bool scriptOrdersMatch(IEnumerable<string> scripts, ScriptTree tree1, ScriptTree tree2)
+		{
+			var tree1Order = getScriptsOrderForTree(scripts, tree1);
+
+			int lastLevel = -1;
+			foreach (var hashSet in tree1Order)
+			{
+				int currentLevel = -1;
+				foreach (string script in hashSet)
+				{
+					if (currentLevel == -1)
+					{
+						currentLevel = tree2.ScriptLayerMap[script];
+						if (currentLevel <= lastLevel)
+							return false;
+
+						lastLevel = currentLevel;
+					}
+					else
+					{
+						if (tree2.ScriptLayerMap[script] != currentLevel)
+							return false;
+					}
+				}
+			}
+
+			return true;
 		}
 	}
 }
