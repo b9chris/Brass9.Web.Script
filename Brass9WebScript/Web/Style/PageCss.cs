@@ -39,7 +39,14 @@ namespace Brass9.Web.Style
 		/// <param name="name"></param>
 		public void Include(string name)
 		{
-			PageCssList.Add(AppCss.Current.List[name]);
+			CssResource cssFile;
+			if (AppCss.Current.List.TryGetValue(name, out cssFile))
+			{
+				PageCssList.Add(cssFile);
+				return;
+			}
+
+			throw new ArgumentOutOfRangeException("name", name, "Did you remember to define this Stylesheet in Global.asax.cs?");
 		}
 
 		/// <summary>
@@ -64,17 +71,18 @@ namespace Brass9.Web.Style
 				//if (css is FileCssResource)
 				//{
 					var file = (FileCssResource)css;
+
 #if DEBUG
-					writer.Write("<link href=\"");
-					writer.Write(appCss.CssFolder);
-					writer.Write(file.DebugPath);
-					writer.WriteLine("\" rel=stylesheet />");
+					string cssFilePath = file.DebugPath;
 #else
-					writer.Write("<link href=\"");
-					writer.Write(appCss.CssFolder);
-					writer.Write(file.MinPath);
-					writer.WriteLine("\" rel=stylesheet />");
+					string cssFilePath = file.MinPath;
 #endif
+
+					writer.Write("<link href=\"");
+					if (!cssFilePath.StartsWith("http") && !cssFilePath.StartsWith("/"))
+						writer.Write(appCss.CssFolder);
+					writer.Write(cssFilePath);
+					writer.WriteLine("\" rel=stylesheet />");
 				//}
 			}
 		}
@@ -89,18 +97,20 @@ namespace Brass9.Web.Style
 
 		public void RenderCss(TextWriter writer, CssResource css)
 		{
+			string cssFolder = AppCss.Current.CssFolder;
 			var file = (FileCssResource)css;
+
 #if DEBUG
-			writer.Write("<link href=\"");
-			writer.Write(AppCss.Current.CssFolder);
-			writer.Write(file.DebugPath);
-			writer.WriteLine("\" rel=stylesheet />");
+			string cssFilePath = file.DebugPath;
 #else
-			writer.Write("<link href=\"");
-			writer.Write(AppCss.Current.CssFolder);
-			writer.Write(file.MinPath);
-			writer.WriteLine("\" rel=stylesheet />");
+			string cssFilePath = file.MinPath;
 #endif
+
+			writer.Write("<link href=\"");
+			if (!cssFilePath.StartsWith("http") && !cssFilePath.StartsWith("/"))
+				writer.Write(cssFolder);
+			writer.Write(cssFilePath);
+			writer.WriteLine("\" rel=stylesheet />");
 		}
 
 
@@ -108,10 +118,14 @@ namespace Brass9.Web.Style
 		{
 			var file = (FileCssResource)css;
 #if DEBUG
-			string webPath = AppCss.Current.CssFolder + file.DebugPath;
+			string webPath = file.DebugPath;
 #else
-			string webPath = AppCss.Current.CssFolder + file.MinPath;
+			string webPath = file.MinPath;
 #endif
+
+			if (!webPath.StartsWith("http") && !webPath.StartsWith("/"))
+				webPath = AppCss.Current.CssFolder + webPath;
+
 			string filePath = HttpContext.Current.Server.MapPath("~" + webPath);
 			var fileInfo = new FileInfo(filePath);
 
